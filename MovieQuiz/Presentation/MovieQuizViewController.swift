@@ -96,7 +96,8 @@ final class MovieQuizViewController: UIViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         let currentQuestion = questions[currentQuestionIndex]
-        show(quiz: QuizStepViewModel(image: <#T##UIImage#>, question: <#T##String#>, questionNumber: <#T##String#>))
+        let image = UIImage(named: currentQuestion.image)!
+        show(quiz: QuizStepViewModel(image: image, question: currentQuestion.text, questionNumber: "\(currentQuestionIndex)"))
         }
 
         

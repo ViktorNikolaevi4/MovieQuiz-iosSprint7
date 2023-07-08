@@ -35,13 +35,13 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="336.5" height="23.5"/>
                                                 <fontDescription key="fontDescription" name="YSDisplay-Medium" family="YS Display" pointSize="20"/>
                                                 <color key="textColor" name="YP White"/>
-                                                <nil key="highlightedColor"/>
+                                                <color key="highlightedColor" name="YP Black"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="1\10" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LQe-1S-dkp" userLabel="Index Label">
                                                 <rect key="frame" x="336.5" y="0.0" width="37.5" height="23.5"/>
                                                 <fontDescription key="fontDescription" name="YSDisplay-Bold" family="YS Display" pointSize="20"/>
                                                 <color key="textColor" name="YP White"/>
-                                                <nil key="highlightedColor"/>
+                                                <color key="highlightedColor" name="YP Black"/>
                                             </label>
                                         </subviews>
                                     </stackView>
@@ -119,19 +119,9 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="c" destination="LQe-1S-dkp" id="V0v-6P-Tun"/>
-                        <outlet property="counerLabel" destination="LQe-1S-dkp" id="7wr-Oh-zPb"/>
                         <outlet property="counterLabel" destination="LQe-1S-dkp" id="22V-ZF-lyp"/>
-                        <outlet property="i" destination="Dpe-qU-qUd" id="OVf-Fu-1TW"/>
-                        <outlet property="image" destination="Dpe-qU-qUd" id="CSg-rT-FBR"/>
                         <outlet property="imageView" destination="Dpe-qU-qUd" id="vkL-sj-dWG"/>
-                        <outlet property="label" destination="LQe-1S-dkp" id="Vzj-HQ-Pfe"/>
-                        <outlet property="label1" destination="LQe-1S-dkp" id="0m8-3J-QJn"/>
-                        <outlet property="labelcouner" destination="EDy-WM-bxV" id="NrZ-u1-jEd"/>
-                        <outlet property="q" destination="EDy-WM-bxV" id="3FV-0g-2Lg"/>
                         <outlet property="textLabel" destination="EDy-WM-bxV" id="mps-Qp-fyc"/>
-                        <outlet property="дфиуд" destination="EDy-WM-bxV" id="yc1-pe-7kN"/>
-                        <outlet property="ыы" destination="gfh-7o-NyF" id="mnl-JR-MoQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
