@@ -71,9 +71,9 @@ final class MovieQuizViewController: UIViewController
             text: "Рейтинг этого фильма больше чем 6?",
             correctAnswer: false)]
     
-    @IBOutlet weak var counterLabel: UILabel!
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var textLabel: UILabel!
+    @IBOutlet private weak var counterLabel: UILabel!
+    @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var textLabel: UILabel!
     
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
@@ -86,9 +86,14 @@ final class MovieQuizViewController: UIViewController
         return questionStep
     }
     private  func show(quiz step: QuizStepViewModel) {
+        imageView.layer.masksToBounds = true
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.layer.cornerRadius = 6
         imageView.image = step.image
+        textLabel.text = step.question
         counterLabel.text = step.questionNumber
-        textLabel.text = step.question}
+    }
     
     
     var currentIndex = 0
@@ -97,7 +102,7 @@ final class MovieQuizViewController: UIViewController
         super.viewDidLoad()
         let currentQuestion = questions[currentQuestionIndex]
         let image = UIImage(named: currentQuestion.image)!
-        show(quiz: QuizStepViewModel(image: image, question: currentQuestion.text, questionNumber: "\(currentQuestionIndex)"))
+        show(quiz: QuizStepViewModel(image: image, question: currentQuestion.text, questionNumber: "1/10"))
         }
 
         
@@ -117,14 +122,11 @@ final class MovieQuizViewController: UIViewController
         showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
     }
     
-    
-    
-    
-    
+       
     
     private func showAnswerResult(isCorrect: Bool) {
         
-        if isCorrect {
+        if isCorrect == true {
             correctAnswers += 1
         }
         
