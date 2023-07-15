@@ -87,9 +87,9 @@ final class MovieQuizViewController: UIViewController
     }
     private  func show(quiz step: QuizStepViewModel) {
         imageView.layer.masksToBounds = true
-        imageView.layer.borderWidth = 1
+        imageView.layer.borderWidth = 0
         imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.layer.cornerRadius = 6
+        imageView.layer.cornerRadius = 20
         imageView.image = step.image
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
