@@ -8,34 +8,19 @@
 import Foundation
 import UIKit
 
-protocol AlertPresenter {
-    
-    func show(alertModel: AlertModel)
-}
-final class AlertPresenterImp1 {
-    weak var viewController: UIViewController?
-    
-    init(viewController: UIViewController? = nil) {
-        self.viewController = viewController
-    }
-    
-    
-}
-
-extension AlertPresenterImp1: AlertPresenter {
-    func show(alertModel: AlertModel) {
+class AlertPresenter {
+    func show(in vc: UIViewController, model: AlertModel) {
         let alert = UIAlertController(
-            title: alertModel.title, message: alertModel.message, preferredStyle: .alert
-        )
-        
-        let action = UIAlertAction(title: alertModel.buttonText, style: .default) { _ in
-            alertModel.buttonAction()
-            
-            
-            
+            title: model.title,
+            message: model.message,
+            preferredStyle: .alert)
+
+        let action = UIAlertAction(title: model.buttonText, style: .default) { _ in
+            model.completion()
         }
-          
+
         alert.addAction(action)
-        viewController?.present(alert, animated: true)
+
+        vc.present(alert, animated: true, completion: nil)
     }
 }
