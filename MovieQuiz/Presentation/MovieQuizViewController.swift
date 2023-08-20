@@ -1,4 +1,5 @@
 import UIKit
+import Foundation
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet private weak var counterLabel: UILabel!
@@ -182,3 +183,4 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         alert.addAction(action)
     }
 }
+ 
