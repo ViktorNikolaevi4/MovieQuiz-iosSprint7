@@ -10,46 +10,51 @@ import Foundation
 import XCTest
 @testable import MovieQuiz
 
-class MoviesLoader: XCTestCase {
+class MoviesLoaderTest: XCTestCase {
     func testSuccessLoading() throws {
-        let loader = MoviesLoader()
+        
+        
+        let stubNetworkClient = StubNetworkClient(emulateError: false)
+        let loader = MoviesLoader(networkClient: stubNetworkClient)
         
         let expectation = expectation(description: "Loading expectation")
         
         loader.loadMovies { result in
-                // Then
-                switch result {
-                case .success(let movies):
-                    // сравниваем данные с тем, что мы предполагали
-                    expectation.fulfill()
-                case .failure(_):
-                    // мы не ожидаем, что пришла ошибка; если она появится, надо будет провалить тест
-                    XCTFail("Unexpected failure") // эта функция проваливает тест
-                }
+            // Then
+            switch result {
+            case .success(let movies):
+                // сравниваем данные с тем, что мы предполагали
+                expectation.fulfill()
+            case .failure(_):
+                // мы не ожидаем, что пришла ошибка; если она появится, надо будет провалить тест
+                XCTFail("Unexpected failure") // эта функция проваливает тест
             }
-           
-           waitForExpectations(timeout: 1)
+        }
+        
+        waitForExpectations(timeout: 1)
         
     }
     
     func testFailureLoading() throws {
-            let stubNetworkClient = StubNetworkClient(emulateError: false)
-        let loader = MoviesLoader(networkClient: stubNetworkClient)
         
-        let expectation = expectation(description: "Loading expectation")
+        let stubNetworkClient = StubNetworkClient(emulateError: true) // говорим, что хотим эмулировать ошибку
+            let loader = MoviesLoader(networkClient: stubNetworkClient)
+            
+            // When
+            let expectation = expectation(description: "Loading expectation")
             
             loader.loadMovies { result in
                 // Then
                 switch result {
-                case .success(let movies):
-                    // давайте проверим, что пришло, например, два фильма — ведь в тестовых данных их всего два
-                    XCTAssertEqual(movies.items.count, 2)
+                case .failure(let error):
+                    XCTAssertNotNil(error)
                     expectation.fulfill()
-                case .failure(_):
+                case .success(_):
                     XCTFail("Unexpected failure")
                 }
             }
             
             waitForExpectations(timeout: 1)
+        
     }
 }

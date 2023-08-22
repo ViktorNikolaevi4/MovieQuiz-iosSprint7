@@ -7,16 +7,14 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
 
- //   private var correctAnswers: Int = 0
+    @IBOutlet weak var buttonNO: UIButton!
+    @IBOutlet weak var buttonYes: UIButton!
 
- //  private var currentQuestionIndex: Int = 0
- //   private let questionsAmount: Int = 10
     private var presenter: MovieQuizPresenter!
-  //   var questionFactory: QuestionFactoryProtocol?
- //   private var currentQuestion: QuizQuestion?
-    private var statisticService: StatisticService?
 
-    private var alertPresenter = AlertPresenter()
+//    private var statisticService: StatisticService?
+
+//    private var alertPresenter = AlertPresenter()
 
     // MARK: - Lifecycle
 
@@ -24,37 +22,25 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         super.viewDidLoad()
 
         presenter = MovieQuizPresenter(viewController: self)
-        presenter.viewController = self
+   //     presenter.viewController = self
         imageView.layer.cornerRadius = 20
  //       questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
-        statisticService = StatisticServiceImplementation()
+  //      statisticService = StatisticServiceImplementation()
 
    //     questionFactory?.loadData()
-        showLoadingIndicator()
+    //    showLoadingIndicator()
     }
 
-  //  // MARK: - QuestionFactoryDelegate
-
-//    func didReceiveNextQuestion(question: QuizQuestion?) {
- //       presenter.didRecieveNextQuestion(question: question)
- //   }
-    
-//    func didLoadDataFromServer() {
- //       activityIndicator.isHidden = true
- //       questionFactory?.requestNextQuestion()
- //   }
-    
-//    func didFailToLoadData(with error: Error) {
-//        showNetworkError(message: error.localizedDescription)
- //   }
 
     // MARK: - Actions
 
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
+     //   sender.isEnabled = false
         presenter.yesButtonClicked()
     }
 
     @IBAction private func noButtonClicked(_ sender: UIButton) {
+   //     sender.isEnabled = false
         presenter.noButtonClicked()
     }
 
@@ -87,18 +73,6 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
             self.present(alert, animated: true, completion: nil)
         }
     
-
-  //      let model = AlertModel(title: result.title, message: message, buttonText: result.buttonText) { [weak self] in
-   //         guard let self = self else { return }
-
-   //         self.presenter.resetQuestionIndex()
-    //        self.presenter.restartGame()
-
-      //      self.questionFactory?.requestNextQuestion()
-   //     }
-
- //       alertPresenter.show(in: self, model: model)
- //   }
     
     func highlightImageBorder(isCorrectAnswer: Bool) {
             imageView.layer.masksToBounds = true

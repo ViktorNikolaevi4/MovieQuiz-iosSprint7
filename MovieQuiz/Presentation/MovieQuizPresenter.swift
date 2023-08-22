@@ -11,13 +11,13 @@ import UIKit
 
 final class MovieQuizPresenter: QuestionFactoryDelegate {
 
-        private var statisticService: StatisticService!
-        let questionsAmount: Int = 10
-        var currentQuestionIndex: Int = 0
-        var currentQuestion: QuizQuestion?
-        weak var viewController: MovieQuizViewController?
-        var correctAnswers: Int = 0
-        var questionFactory: QuestionFactoryProtocol?
+    private var statisticService: StatisticService!
+    private let questionsAmount: Int = 10
+    private var currentQuestionIndex: Int = 0
+    private var currentQuestion: QuizQuestion?
+    private weak var viewController: MovieQuizViewController?
+    private var correctAnswers: Int = 0
+    private var questionFactory: QuestionFactoryProtocol?
     
     init(viewController: MovieQuizViewController) {
             self.viewController = viewController
@@ -145,7 +145,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
                 self.proceedToNextQuestionOrResults()
             }
         }
-    
+
 }
 
 protocol MovieQuizViewControllerProtocol: AnyObject {
