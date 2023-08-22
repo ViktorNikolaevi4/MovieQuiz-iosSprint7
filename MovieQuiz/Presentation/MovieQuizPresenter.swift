@@ -11,7 +11,7 @@ import UIKit
 
 final class MovieQuizPresenter: QuestionFactoryDelegate {
 
-    
+        private var statisticService: StatisticService!
         let questionsAmount: Int = 10
         var currentQuestionIndex: Int = 0
         var currentQuestion: QuizQuestion?
@@ -21,6 +21,8 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     init(viewController: MovieQuizViewController) {
             self.viewController = viewController
+        
+            statisticService = StatisticServiceImplementation()
             
             questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
             questionFactory?.loadData()
@@ -76,11 +78,11 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             
             let givenAnswer = isYes
             
-            viewController?.showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+            proceedWithAnswer(isCorrect: givenAnswer == currentQuestion.correctAnswer)
         }
     
     
-    func showNextQuestionOrResults() {
+    func proceedToNextQuestionOrResults() {
         if self.isLastQuestion() {
             let text = "Вы ответили на \(correctAnswers) из 10, попробуйте еще раз!"
 
@@ -114,4 +116,34 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )
     }
+    
+    func makeResultsMessage() -> String {
+            statisticService.store(correct: correctAnswers, total: questionsAmount)
+            
+            let bestGame = statisticService.bestGame
+            
+            let totalPlaysCountLine = "Количество сыгранных квизов: \(statisticService.gamesCount)"
+            let currentGameResultLine = "Ваш результат: \(correctAnswers)\\\(questionsAmount)"
+            let bestGameInfoLine = "Рекорд: \(bestGame.correct)\\\(bestGame.total)"
+            + " (\(bestGame.date.dateTimeString))"
+            let averageAccuracyLine = "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
+            
+            let resultMessage = [
+                currentGameResultLine, totalPlaysCountLine, bestGameInfoLine, averageAccuracyLine
+            ].joined(separator: "\n")
+            
+            return resultMessage
+        }
+    
+    func proceedWithAnswer(isCorrect: Bool) {
+            didAnswer(isCorrectAnswer: isCorrect)
+            
+            viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                guard let self = self else { return }
+                self.proceedToNextQuestionOrResults()
+            }
+        }
+    
 }
