@@ -9,7 +9,8 @@ import Foundation
 import UIKit
 
 
-final class MovieQuizPresenter {
+final class MovieQuizPresenter: QuestionFactoryDelegate {
+
     
         let questionsAmount: Int = 10
         var currentQuestionIndex: Int = 0
@@ -17,6 +18,48 @@ final class MovieQuizPresenter {
         weak var viewController: MovieQuizViewController?
         var correctAnswers: Int = 0
         var questionFactory: QuestionFactoryProtocol?
+    
+    init(viewController: MovieQuizViewController) {
+            self.viewController = viewController
+            
+            questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+            questionFactory?.loadData()
+            viewController.showLoadingIndicator()
+        }
+    
+    func didLoadDataFromServer() {
+            viewController?.hideLoadingIndicator()
+            questionFactory?.requestNextQuestion()
+        }
+    
+    func didFailToLoadData(with error: Error) {
+            let message = error.localizedDescription
+            viewController?.showNetworkError(message: message)
+        }
+    
+    func didReceiveNextQuestion(question: QuizQuestion?) {
+        guard let question = question else {
+            return
+        }
+        
+        currentQuestion = question
+        let viewModel = convert(model: question)
+        DispatchQueue.main.async { [weak self] in
+            self?.viewController?.show(quiz: viewModel)
+        }
+    }
+    
+       func restartGame() {
+            currentQuestionIndex = 0
+            correctAnswers = 0
+            questionFactory?.requestNextQuestion()
+        }
+    
+    func didAnswer(isCorrectAnswer: Bool) {
+            if isCorrectAnswer {
+                correctAnswers += 1
+            }
+        }
     
       func yesButtonClicked() {
             didAnswer(isYes: true)
@@ -26,7 +69,7 @@ final class MovieQuizPresenter {
            didAnswer(isYes: false)
     }
     
-    private func didAnswer(isYes: Bool) {
+      func didAnswer(isYes: Bool) {
             guard let currentQuestion = currentQuestion else {
                 return
             }
@@ -36,17 +79,6 @@ final class MovieQuizPresenter {
             viewController?.showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
         }
     
-    func didRecieveNextQuestion(question: QuizQuestion?) {
-            guard let question = question else {
-                return
-            }
-            
-            currentQuestion = question
-            let viewModel = convert(model: question)
-            DispatchQueue.main.async { [weak self] in
-                self?.viewController?.show(quiz: viewModel)
-            }
-        }
     
     func showNextQuestionOrResults() {
         if self.isLastQuestion() {

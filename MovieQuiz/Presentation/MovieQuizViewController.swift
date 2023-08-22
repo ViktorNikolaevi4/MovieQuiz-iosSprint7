@@ -1,18 +1,18 @@
 import UIKit
 import Foundation
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
+final class MovieQuizViewController: UIViewController {
     @IBOutlet private weak var counterLabel: UILabel!
     @IBOutlet private weak var imageView: UIImageView!
     @IBOutlet private weak var textLabel: UILabel!
     @IBOutlet private var activityIndicator: UIActivityIndicatorView!
 
-    private var correctAnswers: Int = 0
+ //   private var correctAnswers: Int = 0
 
  //  private var currentQuestionIndex: Int = 0
  //   private let questionsAmount: Int = 10
-    private let presenter = MovieQuizPresenter()
-     var questionFactory: QuestionFactoryProtocol?
+    private var presenter: MovieQuizPresenter!
+  //   var questionFactory: QuestionFactoryProtocol?
  //   private var currentQuestion: QuizQuestion?
     private var statisticService: StatisticService?
 
@@ -23,29 +23,30 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        presenter = MovieQuizPresenter(viewController: self)
         presenter.viewController = self
         imageView.layer.cornerRadius = 20
-        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+ //       questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         statisticService = StatisticServiceImplementation()
 
-        questionFactory?.loadData()
+   //     questionFactory?.loadData()
         showLoadingIndicator()
     }
 
-    // MARK: - QuestionFactoryDelegate
+  //  // MARK: - QuestionFactoryDelegate
 
-    func didReceiveNextQuestion(question: QuizQuestion?) {
-        presenter.didRecieveNextQuestion(question: question)
-    }
+//    func didReceiveNextQuestion(question: QuizQuestion?) {
+ //       presenter.didRecieveNextQuestion(question: question)
+ //   }
     
-    func didLoadDataFromServer() {
-        activityIndicator.isHidden = true
-        questionFactory?.requestNextQuestion()
-    }
+//    func didLoadDataFromServer() {
+ //       activityIndicator.isHidden = true
+ //       questionFactory?.requestNextQuestion()
+ //   }
     
-    func didFailToLoadData(with error: Error) {
-        showNetworkError(message: error.localizedDescription)
-    }
+//    func didFailToLoadData(with error: Error) {
+//        showNetworkError(message: error.localizedDescription)
+ //   }
 
     // MARK: - Actions
 
@@ -69,12 +70,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
      func show(quiz result: QuizResultViewModel) {
         var message = result.text
         if let statisticService = statisticService {
-            statisticService.store(correct: correctAnswers, total: presenter.questionsAmount)
+            statisticService.store(correct: presenter.correctAnswers, total: presenter.questionsAmount)
 
             let bestGame = statisticService.bestGame
 
             let totalPlaysCountLine = "Количество сыгранных квизов: \(statisticService.gamesCount)"
-            let currentGameResultLine = "Ваш результат: \(correctAnswers)\\\(presenter.questionsAmount)"
+            let currentGameResultLine = "Ваш результат: \(presenter.correctAnswers)\\\(presenter.questionsAmount)"
             let bestGameInfoLine = "Рекорд: \(bestGame.correct)\\\(bestGame.total)"
             + " (\(bestGame.date.dateTimeString))"
             let averageAccuracyLine = "Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%"
@@ -90,18 +91,16 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             guard let self = self else { return }
 
             self.presenter.resetQuestionIndex()
-            self.correctAnswers = 0
+            self.presenter.restartGame()
 
-            self.questionFactory?.requestNextQuestion()
+      //      self.questionFactory?.requestNextQuestion()
         }
 
         alertPresenter.show(in: self, model: model)
     }
 
         func showAnswerResult(isCorrect: Bool) {
-        if isCorrect {
-            correctAnswers += 1
-        }
+            presenter.didAnswer(isCorrectAnswer: isCorrect)
 
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
@@ -109,14 +108,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
-            self.presenter.correctAnswers = self.correctAnswers
-            self.presenter.questionFactory = self.questionFactory
+       //     self.presenter.correctAnswers = self.correctAnswers
+       //     self.presenter.questionFactory = self.questionFactory
             self.presenter.showNextQuestionOrResults()        }
     }
 
     func showNextQuestionOrResults() {
         if presenter.isLastQuestion() {
-            let text = "Вы ответили на \(correctAnswers) из 10, попробуйте еще раз!"
+            let text = "Вы ответили на \(presenter.correctAnswers) из 10, попробуйте еще раз!"
 
             let viewModel = QuizResultViewModel(
                 title: "Этот раунд окончен!",
@@ -125,16 +124,21 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             show(quiz: viewModel)
         } else {
             presenter.switchToNextQuestion()
-            questionFactory?.requestNextQuestion()
+            self.presenter.restartGame() // mozhet lishnee
+       //     questionFactory?.requestNextQuestion()
         }
     }
     
-    private func showLoadingIndicator() {
+    func hideLoadingIndicator() {
+            activityIndicator.isHidden = true
+        }
+    
+    func showLoadingIndicator() {
         activityIndicator.isHidden = false // говорим, что индикатор загрузки не скрыт
         activityIndicator.startAnimating() // включаем анимацию
     }
     
-    private func showNetworkError(message: String) {
+    func showNetworkError(message: String) {
         activityIndicator.isHidden = true // скрываем индикатор загрузки
 
         let alert = UIAlertController(
@@ -147,9 +151,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             guard let self = self else { return }
 
             self.presenter.resetQuestionIndex()
-            self.correctAnswers = 0
+            self.presenter.restartGame()
 
-            self.questionFactory?.requestNextQuestion()
+            self.presenter.restartGame()
         }
 
         alert.addAction(action)
